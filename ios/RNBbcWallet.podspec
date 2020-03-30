@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.description  = <<-DESC
                   RNBbcWallet
                    DESC
-  s.homepage     = ""
+  s.homepage     = "https://gitlab.dabank.io/pockmine/react-native-bbc-wallet"
   s.license      = "MIT"
   # s.license      = { :type => "MIT", :file => "FILE_LICENSE" }
   s.author             = { "author" => "author@domain.cn" }
