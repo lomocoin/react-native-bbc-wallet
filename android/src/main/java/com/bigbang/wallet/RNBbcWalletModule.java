@@ -21,7 +21,7 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
 
   @Override
   public String getName() {
-    return "RNBBCWallet";
+    return "RNBbcWallet";
   }
 
   @ReactMethod
