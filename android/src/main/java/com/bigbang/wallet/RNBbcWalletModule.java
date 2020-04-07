@@ -1,10 +1,11 @@
 package com.bigbang.wallet;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.WritableMap;
 
 import bbc.Bbc;
 import bbc.KeyInfo;
@@ -45,7 +46,13 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
         final byte[] seed = Bip39.newSeed(mnemonic, salt);
         final KeyInfo keyPair = Bbc.deriveKey(seed, 0, 0, 0);
 
-        promise.resolve(keyPair);
+        final WritableMap resultMap = Arguments.createMap();
+
+        resultMap.putString("address", keyPair.getAddress());
+        resultMap.putString("privateKey", keyPair.getPrivateKey());
+        resultMap.putString("publicKey", keyPair.getPublicKey());
+
+        promise.resolve(resultMap);
       }
     } catch (final Exception e) {
       promise.reject("error", e);
@@ -57,7 +64,13 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
     try {
       final KeyInfo keyPair = Bbc.parsePrivateKey(privateKey);
 
-      promise.resolve(keyPair);
+      final WritableMap resultMap = Arguments.createMap();
+
+      resultMap.putString("address", keyPair.getAddress());
+      resultMap.putString("privateKey", keyPair.getPrivateKey());
+      resultMap.putString("publicKey", keyPair.getPublicKey());
+
+      promise.resolve(resultMap);
     } catch (final Exception e) {
       promise.reject("error", e);
     }
