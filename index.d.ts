@@ -7,7 +7,7 @@ export interface KeyInfo {
 declare module RNBbcWallet {
   function generateMnemonic(): Promise<string>;
   function importMnemonic(mnemonic: string, salt: string): Promise<KeyInfo>;
-  function importPrivateKey(privateKey: string): Promise<string>;
+  function importPrivateKey(privateKey: string): Promise<KeyInfo>;
   function signTransaction(
     txString: string,
     privateKey: string
