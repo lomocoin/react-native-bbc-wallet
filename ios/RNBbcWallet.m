@@ -30,18 +30,22 @@ RCT_EXPORT_METHOD(importMnemonic:(NSString*)mnemonic
                                   reject:(RCTPromiseRejectBlock)reject) {
     NSError * __autoreleasing error;
     
-    NSData* seed = Bip39NewSeed(mnemonic, salt);
-    BbcKeyInfo * keyInfo = BbcDeriveKey(seed, 0, 0, 0, &error);
-
-    NSMutableDictionary *retDict = [NSMutableDictionary dictionaryWithCapacity:3];
-        retDict[@"address"] = keyInfo.address;
-        retDict[@"privateKey"] = keyInfo.privateKey;
-        retDict[@"publicKey"] = keyInfo.publicKey;
-    
-    if (error) {
-        reject([NSString stringWithFormat:@"%ld",error.code],error.localizedDescription,error);
+    if (!Bip39IsMnemonicValid(mnemonic)) {
+        reject(@"Invalid Mnemonic", @"error", nil);
     } else {
-        resolve(retDict);
+        NSData* seed = Bip39NewSeed(mnemonic, salt);
+        BbcKeyInfo * keyInfo = BbcDeriveKey(seed, 0, 0, 0, &error);
+
+        NSMutableDictionary *retDict = [NSMutableDictionary dictionaryWithCapacity:3];
+            retDict[@"address"] = keyInfo.address;
+            retDict[@"privateKey"] = keyInfo.privateKey;
+            retDict[@"publicKey"] = keyInfo.publicKey;
+        
+        if (error) {
+            reject([NSString stringWithFormat:@"%ld",error.code],error.localizedDescription,error);
+        } else {
+            resolve(retDict);
+        }
     }
 }
 
