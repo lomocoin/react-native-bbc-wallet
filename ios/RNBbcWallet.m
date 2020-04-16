@@ -31,7 +31,7 @@ RCT_EXPORT_METHOD(importMnemonic:(NSString*)mnemonic
     NSError * __autoreleasing error;
     
     if (!Bip39IsMnemonicValid(mnemonic)) {
-        reject(@"Invalid Mnemonic", @"error", nil);
+        reject(@"error", @"Invalid Mnemonic", nil);
     } else {
         NSData* seed = Bip39NewSeed(mnemonic, salt);
         BbcKeyInfo * keyInfo = BbcDeriveKey(seed, 0, 0, 0, &error);
