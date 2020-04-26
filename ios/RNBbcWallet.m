@@ -14,7 +14,7 @@ RCT_EXPORT_MODULE()
 RCT_EXPORT_METHOD(generateMnemonic:(RCTPromiseResolveBlock)resolve
                                     reject:(RCTPromiseRejectBlock)reject) {
     NSError * __autoreleasing error;
-    
+
     NSData* entropy = Bip39NewEntropy(128, &error);
     NSString* mnemonic = Bip39NewMnemonic(entropy, &error);
     if (error) {
@@ -29,7 +29,7 @@ RCT_EXPORT_METHOD(importMnemonic:(NSString*)mnemonic
                                   resolve:(RCTPromiseResolveBlock)resolve
                                   reject:(RCTPromiseRejectBlock)reject) {
     NSError * __autoreleasing error;
-    
+
     if (!Bip39IsMnemonicValid(mnemonic)) {
         reject(@"error", @"Invalid Mnemonic", nil);
     } else {
@@ -40,7 +40,7 @@ RCT_EXPORT_METHOD(importMnemonic:(NSString*)mnemonic
             retDict[@"address"] = keyInfo.address;
             retDict[@"privateKey"] = keyInfo.privateKey;
             retDict[@"publicKey"] = keyInfo.publicKey;
-        
+
         if (error) {
             reject([NSString stringWithFormat:@"%ld",error.code],error.localizedDescription,error);
         } else {
@@ -53,13 +53,13 @@ RCT_EXPORT_METHOD(importPrivateKey:(NSString*)privateKey
                                     resolve:(RCTPromiseResolveBlock)resolve
                                     reject:(RCTPromiseRejectBlock)reject) {
     NSError * __autoreleasing error;
-    
+
     BbcKeyInfo * keyInfo = BbcParsePrivateKey(privateKey, &error);
     NSMutableDictionary *retDict = [NSMutableDictionary dictionaryWithCapacity:3];
         retDict[@"address"] = keyInfo.address;
         retDict[@"privateKey"] = keyInfo.privateKey;
         retDict[@"publicKey"] = keyInfo.publicKey;
-    
+
     if (error) {
         reject([NSString stringWithFormat:@"%ld",error.code],error.localizedDescription,error);
     } else {
@@ -72,13 +72,33 @@ RCT_EXPORT_METHOD(signTransaction:(NSString*) txString
                                    resolve:(RCTPromiseResolveBlock)resolve
                                    reject:(RCTPromiseRejectBlock)reject) {
     NSError * __autoreleasing error;
-    
-    NSString* signedTransaction = BbcSignWithPrivateKey(txString, privateKey, &error);
-    
+
+    NSString* signedTransaction = BbcSignWithPrivateKey(txString, NULL, privateKey, &error);
+
     if (error) {
         reject([NSString stringWithFormat:@"%ld",error.code],error.localizedDescription,error);
     } else {
         resolve(signedTransaction);
+    }
+}
+
+RCT_EXPORT_METHOD(signTransactionWithTemplate:(NSString*) txString
+                                   templateData:(NSString*) templateData
+                                   privateKey:(NSString*) privateKey
+                                   resolve:(RCTPromiseResolveBlock)resolve
+                                   reject:(RCTPromiseRejectBlock)reject) {
+    NSError * __autoreleasing error;
+    
+    NSLog(@"txString:%@",txString);
+    NSLog(@"templateData:%@",templateData);
+    NSLog(@"privateKey:%@",privateKey);
+
+    NSString* signTransactionWithTemplate = BbcSignWithPrivateKey(txString, templateData, privateKey, &error);
+
+    if (error) {
+        reject([NSString stringWithFormat:@"%ld",error.code],error.localizedDescription,error);
+    } else {
+        resolve(signTransactionWithTemplate);
     }
 }
 @end
