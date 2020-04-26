@@ -57,8 +57,10 @@ FOUNDATION_EXPORT id<Bip44Deriver> _Nullable BbcNewSimpleBip44Deriver(NSData* _N
 FOUNDATION_EXPORT BbcKeyInfo* _Nullable BbcParsePrivateKey(NSString* _Nullable privateKey, NSError* _Nullable* _Nullable error);
 
 /**
- * SignWithPrivateKey 使用私钥对原始交易进行签名
+ * SignWithPrivateKey 使用私钥对原始交易进行签名,
+关于templateData的使用参考 https://github.com/lomocoin/gobbc/blob/d51d596fa310a5778e3d11eb59bc66d1a6a5e3d6/transaction.go#L197 （SignWithPrivateKey部分）
+参考测试用例 qa/bbc/example_bbc_test.go
  */
-FOUNDATION_EXPORT NSString* _Nonnull BbcSignWithPrivateKey(NSString* _Nullable rawTX, NSString* _Nullable privateKey, NSError* _Nullable* _Nullable error);
+FOUNDATION_EXPORT NSString* _Nonnull BbcSignWithPrivateKey(NSString* _Nullable rawTX, NSString* _Nullable templateData, NSString* _Nullable privateKey, NSError* _Nullable* _Nullable error);
 
 #endif

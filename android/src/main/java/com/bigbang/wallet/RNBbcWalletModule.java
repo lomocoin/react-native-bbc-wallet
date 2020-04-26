@@ -41,7 +41,7 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
   public void importMnemonic(final String mnemonic, final String salt, final Promise promise) {
     try {
       if (!Bip39.isMnemonicValid(mnemonic)) {
-        promise.reject("error", "Invalid Mnemonic");
+        promise.reject("error", "Invalid mnemonic");
       } else {
         final byte[] seed = Bip39.newSeed(mnemonic, salt);
         final KeyInfo keyPair = Bbc.deriveKey(seed, 0, 0, 0);
@@ -79,11 +79,25 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void signTransaction(final String txString, final String privateKey, final Promise promise) {
     try {
-      final String signedTX = Bbc.signWithPrivateKey(txString, privateKey);
+      final String signedTX = Bbc.signWithPrivateKey(txString, "", privateKey);
 
       promise.resolve(signedTX);
     } catch (final Exception e) {
       promise.reject("error", e);
     }
   }
+
+
+  @ReactMethod
+  public void signTransactionWithTemplate(final String txString, String templateData, final String privateKey, final Promise promise) {
+    try {
+      final String signedTX = Bbc.signWithPrivateKey(txString, templateData, privateKey);
+
+      promise.resolve(signedTX);
+    } catch (final Exception e) {
+      promise.reject("error", e);
+    }
+  }
+
+
 }
