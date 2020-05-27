@@ -156,17 +156,19 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
       }
 
       TxBuilder txBuilder = Bbc.newTxBuilder();
-      String hex = txBuilder
-              .setAnchor(anchor)
-              .setTimestamp(timestamp)
-              .setVersion(version)
-              .setLockUntil(lockUntil)
-              .addInput(txid, (byte)vout)
-              .setAddress(address)
-              .setAmount(amount)
-              .setFee(fee)
-              .setStringData(data)
-              .build();
+      txBuilder
+        .setAnchor(anchor)
+        .setTimestamp(timestamp)
+        .setVersion(version)
+        .setLockUntil(lockUntil)
+        .addInput(txid, (byte)vout)
+        .setAddress(address)
+        .setAmount(amount)
+        .setFee(fee);
+      if (!"".equals(data) && data != null) {
+        txBuilder.setStringData(data);
+      }
+      String hex = txBuilder.build();
       promise.resolve(hex);
     } catch (Exception ex) {
       promise.reject("error", ex);
