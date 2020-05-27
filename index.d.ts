@@ -4,19 +4,32 @@ export interface KeyInfo {
   address: string;
 }
 
+export interface ITransactionData {
+  txid: string;
+  vout: number;
+  address: string;
+  anchor: string;
+  amount: number;
+  fee: number;
+  version: number;
+  lockUntil: number;
+  timestamp: string;
+}
+
 declare module RNBbcWallet {
   function generateMnemonic(): Promise<string>;
   function importMnemonic(mnemonic: string, salt: string): Promise<KeyInfo>;
   function importPrivateKey(privateKey: string): Promise<KeyInfo>;
   function signTransactionWithTemplate(
-    txString: string,
-    templateData: string,
-    privateKey: string
+      txString: string,
+      templateData: string,
+      privateKey: string
   ): Promise<string>;
   function signTransaction(
-    txString: string,
-    privateKey: string
+      txString: string,
+      privateKey: string
   ): Promise<string>;
+  function buildTransaction(data: ITransactionData): Promise<string>;
 }
 
 export default RNBbcWallet;
