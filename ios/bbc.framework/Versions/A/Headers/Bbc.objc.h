@@ -13,6 +13,7 @@
 #include "Bip44.objc.h"
 
 @class BbcKeyInfo;
+@class BbcTxBuilder;
 
 /**
  * KeyInfo 私钥，公钥，地址
@@ -26,6 +27,70 @@
 @property (nonatomic) NSString* _Nonnull privateKey;
 @property (nonatomic) NSString* _Nonnull publicKey;
 @property (nonatomic) NSString* _Nonnull address;
+@end
+
+/**
+ * TxBuilder transaction builder
+ */
+@interface BbcTxBuilder : NSObject <goSeqRefInterface> {
+}
+@property(strong, readonly) _Nonnull id _ref;
+
+- (nonnull instancetype)initWithRef:(_Nonnull id)ref;
+/**
+ * NewTxBuilder new 一个transaction builder
+ */
+- (nullable instancetype)init;
+// skipped field TxBuilder.TXBuilder with unsupported type: *github.com/lomocoin/gobbc.TXBuilder
+
+/**
+ * AddInput 参考listunspent,确保输入金额满足amount
+ */
+- (BbcTxBuilder* _Nullable)addInput:(NSString* _Nullable)txid vout:(int8_t)vout;
+/**
+ * Build 构造交易,返回hex编码的tx
+ */
+- (NSString* _Nonnull)build:(NSError* _Nullable* _Nullable)error;
+/**
+ * SetAddress 转账地址,目前只支持公钥地址
+ */
+- (BbcTxBuilder* _Nullable)setAddress:(NSString* _Nullable)add;
+/**
+ * SetAmount 转账金额
+ */
+- (BbcTxBuilder* _Nullable)setAmount:(double)amount;
+/**
+ * SetAnchor 锚定分支id
+ */
+- (BbcTxBuilder* _Nullable)setAnchor:(NSString* _Nullable)anchor;
+/**
+ * SetData 原始data设置,参考 UtilDataEncoding
+ */
+- (BbcTxBuilder* _Nullable)setData:(NSData* _Nullable)data;
+/**
+ * SetDataWithUUID 指定uuid,timestamp,data
+ */
+- (BbcTxBuilder* _Nullable)setDataWithUUID:(NSString* _Nullable)p0 timestamp:(int64_t)timestamp data:(NSString* _Nullable)data;
+/**
+ * SetFee 手续费，目前0.01，如果带data则0.03, 额外需咨询BBC
+ */
+- (BbcTxBuilder* _Nullable)setFee:(double)fee;
+/**
+ * SetLockUntil lock until
+ */
+- (BbcTxBuilder* _Nullable)setLockUntil:(long)lockUntil;
+/**
+ * SetStringData 自动编码数据,自动生成uuid和时间戳
+ */
+- (BbcTxBuilder* _Nullable)setStringData:(NSString* _Nullable)data;
+/**
+ * SetTimestamp 交易时间戳
+ */
+- (BbcTxBuilder* _Nullable)setTimestamp:(long)timestamp;
+/**
+ * SetVersion 当前版本 1
+ */
+- (BbcTxBuilder* _Nullable)setVersion:(long)v;
 @end
 
 /**
@@ -50,6 +115,11 @@ FOUNDATION_EXPORT id<Bip44Deriver> _Nullable BbcNewBip44Deriver(NSData* _Nullabl
  * NewSimpleBip44Deriver 根据种子获取bip44推导,仅推导1个
  */
 FOUNDATION_EXPORT id<Bip44Deriver> _Nullable BbcNewSimpleBip44Deriver(NSData* _Nullable seed, NSError* _Nullable* _Nullable error);
+
+/**
+ * NewTxBuilder new 一个transaction builder
+ */
+FOUNDATION_EXPORT BbcTxBuilder* _Nullable BbcNewTxBuilder(void);
 
 /**
  * ParsePrivateKey 解析私钥，返回 privateKey,publicKey,address
