@@ -21,13 +21,13 @@ declare module RNBbcWallet {
   function importMnemonic(mnemonic: string, salt: string): Promise<KeyInfo>;
   function importPrivateKey(privateKey: string): Promise<KeyInfo>;
   function signTransactionWithTemplate(
-      txString: string,
-      templateData: string,
-      privateKey: string
+    txString: string,
+    templateData: string,
+    privateKey: string
   ): Promise<string>;
   function signTransaction(
-      txString: string,
-      privateKey: string
+    txString: string,
+    privateKey: string
   ): Promise<string>;
   function buildTransaction(data: ITransactionData): Promise<string>;
 }
