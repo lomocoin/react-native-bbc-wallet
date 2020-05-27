@@ -11,6 +11,7 @@ export interface ITransactionData {
   anchor: string;
   amount: number;
   fee: number;
+  data?: string;
   version: number;
   lockUntil: number;
   timestamp: string;

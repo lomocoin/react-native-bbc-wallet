@@ -127,7 +127,11 @@ RCT_EXPORT_METHOD(buildTransaction:(NSDictionary *) map
     [txBuilder setAddress:(address)];
     [txBuilder setAmount:(amount)];
     [txBuilder setFee:(fee)];
-    [txBuilder setStringData:(data)];
+    if (data) {
+        NSLog(@"data:%@",data);
+        [txBuilder setStringData:(data)];
+    }
+    
     NSString* hex = [txBuilder build:(&error)];
     
     if (error) {
