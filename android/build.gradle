@@ -37,7 +37,6 @@ repositories {
 
 dependencies {
     api 'com.facebook.react:react-native:+'
-    compile(name:'bbc', ext:'aar')
-    compile files('libs/bbc-sources.jar')
+    implementation(name:'bbc', ext:'aar')
+    implementation files('libs/bbc-sources.jar')
 }
-  

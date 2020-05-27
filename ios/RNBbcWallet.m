@@ -1,4 +1,5 @@
 
+#import <React/RCTConvert.h>
 #import "RNBbcWallet.h"
 #import <bbc/Bbc.h>
 // @import Mobile;
@@ -101,5 +102,41 @@ RCT_EXPORT_METHOD(signTransactionWithTemplate:(NSString*) txString
         resolve(signTransactionWithTemplate);
     }
 }
+
+RCT_EXPORT_METHOD(buildTransaction:(NSDictionary *) map
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject){
+    NSError * __autoreleasing error;
+    NSString* txid = [RCTConvert NSString:map[@"txid"]];
+    int vout = [RCTConvert int:map[@"vout"]];
+    NSString* address = [RCTConvert NSString:map[@"address"]];
+    NSString* anchor = [RCTConvert NSString:map[@"anchor"]];
+    double amount = [RCTConvert double:map[@"amount"]];
+    double fee = [RCTConvert double:map[@"fee"]];
+    int version = [RCTConvert int:map[@"version"]];
+    int lockUntil = [RCTConvert int:map[@"lockUntil"]];
+    NSString* timestamp = [RCTConvert NSString:map[@"timestamp"]];
+    NSString* data = [RCTConvert NSString:map[@"data"]];
+        
+    BbcTxBuilder *txBuilder = BbcNewTxBuilder();
+    [txBuilder setAnchor:(anchor)];
+    [txBuilder setTimestamp:([timestamp longLongValue])];
+    [txBuilder setVersion:(version)];
+    [txBuilder setLockUntil:(lockUntil)];
+    [txBuilder addInput:(txid) vout:(vout)];
+    [txBuilder setAddress:(address)];
+    [txBuilder setAmount:(amount)];
+    [txBuilder setFee:(fee)];
+    [txBuilder setStringData:(data)];
+    NSString* hex = [txBuilder build:(&error)];
+    
+    if (error) {
+        reject([NSString stringWithFormat:@"%ld",error.code],error.localizedDescription,error);
+    } else {
+        resolve(hex);
+    }
+    
+}
+
 @end
 
