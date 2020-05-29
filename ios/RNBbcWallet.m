@@ -131,7 +131,7 @@ RCT_EXPORT_METHOD(buildTransaction:(NSDictionary *) map
     for (int i = 0; i < utxos.count; i++) {
         NSDictionary* utxo = utxos[i];
         NSString* txid = [RCTConvert NSString:utxo[@"txid"]];
-        int vout = [RCTConvert int:map[@"vout"]];
+        int vout = [RCTConvert int:utxo[@"vout"]];
         [txBuilder addInput:(txid) vout:(vout)];
     }
     
