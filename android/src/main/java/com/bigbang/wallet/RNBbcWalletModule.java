@@ -5,8 +5,12 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import bbc.Bbc;
 import bbc.KeyInfo;
@@ -103,57 +107,16 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void buildTransaction(ReadableMap map, Promise promise) {
-    String txid = "";
-    int vout = 0;
-    String address = "";
-    long timestamp = 0;
-    String anchor = "";
-    double amount = 0;
-    double fee = 0;
-    int lockUntil = 0;
-    int version = 1;
-    String data = "";
-
     try {
-      if (map.hasKey("txid")) {
-        txid = map.getString("txid");
-      }
-
-      if (map.hasKey("vout")) {
-        vout = map.getInt("vout");
-      }
-
-      if (map.hasKey("address")) {
-        address = map.getString("address");
-      }
-
-      if (map.hasKey("anchor")) {
-        anchor = map.getString("anchor");
-      }
-
-      if (map.hasKey("amount")) {
-        amount = map.getDouble("amount");
-      }
-
-      if (map.hasKey("fee")) {
-        fee = map.getDouble("fee");
-      }
-
-      if (map.hasKey("version")) {
-        version = map.getInt("version");
-      }
-
-      if (map.hasKey("lockUntil")) {
-        lockUntil = map.getInt("lockUntil");
-      }
-
-      if (map.hasKey("timestamp")) {
-        timestamp = Long.parseLong(map.getString("timestamp"));
-      }
-
-      if (map.hasKey("data")) {
-        data = map.getString("data");
-      }
+      ReadableArray utxos = map.getArray("utxos");
+      String address = map.getString("address");
+      long timestamp = Long.parseLong(map.getString("timestamp"));
+      String anchor = map.getString("anchor");
+      double amount = map.getDouble("amount");
+      double fee = map.getDouble("fee");
+      int version = map.getInt("version");
+      int lockUntil = map.getInt("lockUntil");
+      String data = map.getString("data");
 
       TxBuilder txBuilder = Bbc.newTxBuilder();
       txBuilder
@@ -161,12 +124,15 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
         .setTimestamp(timestamp)
         .setVersion(version)
         .setLockUntil(lockUntil)
-        .addInput(txid, (byte)vout)
         .setAddress(address)
         .setAmount(amount)
         .setFee(fee);
       if (!"".equals(data) && data != null) {
         txBuilder.setStringData(data);
+      }
+      for (int i = 0; i < utxos.size(); i++) {
+        ReadableMap utxo = utxos.getMap(i);
+        txBuilder.addInput(utxo.getString("txid"), (byte)utxo.getInt("vout"));
       }
       String hex = txBuilder.build();
       promise.resolve(hex);
