@@ -16,6 +16,7 @@ export interface ITransactionData {
   amount: number;
   fee: number;
   data?: string;
+  dataUUID?: string;
   version: number;
   lockUntil: number;
   timestamp: string;

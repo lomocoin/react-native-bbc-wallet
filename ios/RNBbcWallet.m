@@ -116,6 +116,7 @@ RCT_EXPORT_METHOD(buildTransaction:(NSDictionary *) map
     int lockUntil = [RCTConvert int:map[@"lockUntil"]];
     NSString* timestamp = [RCTConvert NSString:map[@"timestamp"]];
     NSString* data = [RCTConvert NSString:map[@"data"]];
+    NSString* dataUUID = [RCTConvert NSString:map[@"dataUUID"]];
         
     BbcTxBuilder *txBuilder = BbcNewTxBuilder();
     [txBuilder setAnchor:(anchor)];
@@ -126,7 +127,11 @@ RCT_EXPORT_METHOD(buildTransaction:(NSDictionary *) map
     [txBuilder setAmount:(amount)];
     [txBuilder setFee:(fee)];
     if (data) {
-        [txBuilder setStringData:(data)];
+        if (dataUUID) {
+            [txBuilder setDataWithUUID:(dataUUID) timestamp:([timestamp longLongValue]) data:(data)];
+        } else {
+            [txBuilder setStringData:(data)];
+        }
     }
     for (int i = 0; i < utxos.count; i++) {
         NSDictionary* utxo = utxos[i];

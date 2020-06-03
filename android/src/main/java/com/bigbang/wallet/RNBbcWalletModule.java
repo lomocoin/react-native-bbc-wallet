@@ -116,7 +116,6 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
       double fee = map.getDouble("fee");
       int version = map.getInt("version");
       int lockUntil = map.getInt("lockUntil");
-      String data = map.getString("data");
 
       TxBuilder txBuilder = Bbc.newTxBuilder();
       txBuilder
@@ -127,9 +126,22 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
         .setAddress(address)
         .setAmount(amount)
         .setFee(fee);
-      if (!"".equals(data) && data != null) {
-        txBuilder.setStringData(data);
+
+      if (map.hasKey("dataUUID") && map.hasKey("data")) {
+        String dataUUID = map.getString("dataUUID");
+        String data = map.getString("data");
+        if (!"".equals(data) && data != null) {
+          txBuilder.setDataWithUUID(dataUUID, timestamp, data);
+        }
       }
+
+      if(map.hasKey("data") && !map.hasKey("dataUUID")) {
+        String data = map.getString("data");
+        if (!"".equals(data) && data != null) {
+          txBuilder.setStringData(data);
+        }
+      }
+
       for (int i = 0; i < utxos.size(); i++) {
         ReadableMap utxo = utxos.getMap(i);
         txBuilder.addInput(utxo.getString("txid"), (byte)utxo.getInt("vout"));
