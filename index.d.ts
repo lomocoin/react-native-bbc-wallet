@@ -10,7 +10,7 @@ export interface IUTXO {
 }
 
 export interface ITransactionData {
-  utxos: IUTXO[],
+  utxos: IUTXO[];
   address: string;
   anchor: string;
   amount: number;
