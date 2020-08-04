@@ -151,6 +151,21 @@ RCT_EXPORT_METHOD(buildTransaction:(NSDictionary *) map
     
 }
 
+RCT_EXPORT_METHOD(addressToPublicKey:(NSString*) address
+                                   resolve:(RCTPromiseResolveBlock)resolve
+                                   reject:(RCTPromiseRejectBlock)reject) {
+    NSError * __autoreleasing error;
+    
+
+    NSString* publicKey = BbcAddress2pubk(address, &error);
+
+    if (error) {
+        reject([NSString stringWithFormat:@"%ld",error.code],error.localizedDescription,error);
+    } else {
+        resolve(publicKey);
+    }
+}
+
 RCT_EXPORT_METHOD(convertHexStrToBase64:(NSString*) hex1
                                    hex2:(NSString*) hex2
                                 resolve:(RCTPromiseResolveBlock)resolve

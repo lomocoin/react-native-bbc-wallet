@@ -109,6 +109,17 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
+  public void addressToPublicKey(String address, Promise promise) {
+    try {
+      String publicKey = Bbc.address2pubk(address);
+      promise.resolve(publicKey);
+    } catch (Exception e) {
+      e.printStackTrace();
+      promise.reject(e);
+    }
+  }
+
+  @ReactMethod
   public void buildTransaction(ReadableMap map, Promise promise) {
     try {
       ReadableArray utxos = map.getArray("utxos");
