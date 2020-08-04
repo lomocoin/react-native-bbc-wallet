@@ -94,14 +94,24 @@
 @end
 
 /**
+ * Address2pubk 将地址转换为公钥
+ */
+FOUNDATION_EXPORT NSString* _Nonnull BbcAddress2pubk(NSString* _Nullable address, NSError* _Nullable* _Nullable error);
+
+/**
  * DecodeTX 解析原始交易（使用JSON RPC createtransaction 创建的交易）,
  */
 FOUNDATION_EXPORT NSString* _Nonnull BbcDecodeTX(NSString* _Nullable rawTX, NSError* _Nullable* _Nullable error);
 
 /**
- * DeriveKey 由seed推导 私钥、公钥、地址, 入参参考 NewBip44Deriver
+ * DeriveKey 该函数后面3个参数无效，等同于 DeriveKeySimple，仅保留
  */
 FOUNDATION_EXPORT BbcKeyInfo* _Nullable BbcDeriveKey(NSData* _Nullable seed, long accountIndex, long changeType, long index, NSError* _Nullable* _Nullable error);
+
+/**
+ * DeriveKeySimple 推导路径 m/44'/%d'
+ */
+FOUNDATION_EXPORT BbcKeyInfo* _Nullable BbcDeriveKeySimple(NSData* _Nullable seed, NSError* _Nullable* _Nullable error);
 
 /**
  * NewBip44Deriver 根据种子获取bip44推导
@@ -110,6 +120,9 @@ changeType 0:外部使用， 1:找零， 通常使用0,BBC通常找零到发送�
 index 地址索引，以0开始
  */
 FOUNDATION_EXPORT id<Bip44Deriver> _Nullable BbcNewBip44Deriver(NSData* _Nullable seed, long accountIndex, long changeType, long index, NSError* _Nullable* _Nullable error);
+
+// skipped function NewCoin with unsupported parameter or return types
+
 
 /**
  * NewSimpleBip44Deriver 根据种子获取bip44推导,仅推导1个
