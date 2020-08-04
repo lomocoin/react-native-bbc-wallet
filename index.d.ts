@@ -31,6 +31,7 @@ declare module RNBbcWallet {
     privateKey: string
   ): Promise<string>;
   function buildTransaction(data: ITransactionData): Promise<string>;
+  function convertHexStrToBase64(hex1: string, hex2: string): Promise<string>;
 }
 
 export default RNBbcWallet;
