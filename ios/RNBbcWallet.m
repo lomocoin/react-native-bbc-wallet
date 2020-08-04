@@ -107,8 +107,7 @@ RCT_EXPORT_METHOD(buildTransaction:(NSDictionary *) map
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject){
     NSError * __autoreleasing error;
-    NSString* txid = [RCTConvert NSString:map[@"txid"]];
-    int vout = [RCTConvert int:map[@"vout"]];
+    NSArray* utxos = [RCTConvert NSArray:map[@"utxos"]];
     NSString* address = [RCTConvert NSString:map[@"address"]];
     NSString* anchor = [RCTConvert NSString:map[@"anchor"]];
     double amount = [RCTConvert double:map[@"amount"]];
@@ -117,19 +116,28 @@ RCT_EXPORT_METHOD(buildTransaction:(NSDictionary *) map
     int lockUntil = [RCTConvert int:map[@"lockUntil"]];
     NSString* timestamp = [RCTConvert NSString:map[@"timestamp"]];
     NSString* data = [RCTConvert NSString:map[@"data"]];
+    NSString* dataUUID = [RCTConvert NSString:map[@"dataUUID"]];
         
     BbcTxBuilder *txBuilder = BbcNewTxBuilder();
     [txBuilder setAnchor:(anchor)];
     [txBuilder setTimestamp:([timestamp longLongValue])];
     [txBuilder setVersion:(version)];
     [txBuilder setLockUntil:(lockUntil)];
-    [txBuilder addInput:(txid) vout:(vout)];
     [txBuilder setAddress:(address)];
     [txBuilder setAmount:(amount)];
     [txBuilder setFee:(fee)];
     if (data) {
-        NSLog(@"data:%@",data);
-        [txBuilder setStringData:(data)];
+        if (dataUUID) {
+            [txBuilder setDataWithUUID:(dataUUID) timestamp:([timestamp longLongValue]) data:(data)];
+        } else {
+            [txBuilder setStringData:(data)];
+        }
+    }
+    for (int i = 0; i < utxos.count; i++) {
+        NSDictionary* utxo = utxos[i];
+        NSString* txid = [RCTConvert NSString:utxo[@"txid"]];
+        int vout = [RCTConvert int:utxo[@"vout"]];
+        [txBuilder addInput:(txid) vout:(vout)];
     }
     
     NSString* hex = [txBuilder build:(&error)];

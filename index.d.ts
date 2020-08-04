@@ -4,14 +4,19 @@ export interface KeyInfo {
   address: string;
 }
 
-export interface ITransactionData {
+export interface IUTXO {
   txid: string;
   vout: number;
+}
+
+export interface ITransactionData {
+  utxos: IUTXO[];
   address: string;
   anchor: string;
   amount: number;
   fee: number;
   data?: string;
+  dataUUID?: string;
   version: number;
   lockUntil: number;
   timestamp: string;
