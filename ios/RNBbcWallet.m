@@ -2,6 +2,7 @@
 #import <React/RCTConvert.h>
 #import "RNBbcWallet.h"
 #import <bbc/Bbc.h>
+#import "StringUtils.h"
 // @import Mobile;
 
 @implementation RNBbcWallet
@@ -107,8 +108,7 @@ RCT_EXPORT_METHOD(buildTransaction:(NSDictionary *) map
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject){
     NSError * __autoreleasing error;
-    NSString* txid = [RCTConvert NSString:map[@"txid"]];
-    int vout = [RCTConvert int:map[@"vout"]];
+    NSArray* utxos = [RCTConvert NSArray:map[@"utxos"]];
     NSString* address = [RCTConvert NSString:map[@"address"]];
     NSString* anchor = [RCTConvert NSString:map[@"anchor"]];
     double amount = [RCTConvert double:map[@"amount"]];
@@ -117,19 +117,28 @@ RCT_EXPORT_METHOD(buildTransaction:(NSDictionary *) map
     int lockUntil = [RCTConvert int:map[@"lockUntil"]];
     NSString* timestamp = [RCTConvert NSString:map[@"timestamp"]];
     NSString* data = [RCTConvert NSString:map[@"data"]];
+    NSString* dataUUID = [RCTConvert NSString:map[@"dataUUID"]];
         
     BbcTxBuilder *txBuilder = BbcNewTxBuilder();
     [txBuilder setAnchor:(anchor)];
     [txBuilder setTimestamp:([timestamp longLongValue])];
     [txBuilder setVersion:(version)];
     [txBuilder setLockUntil:(lockUntil)];
-    [txBuilder addInput:(txid) vout:(vout)];
     [txBuilder setAddress:(address)];
     [txBuilder setAmount:(amount)];
     [txBuilder setFee:(fee)];
     if (data) {
-        NSLog(@"data:%@",data);
-        [txBuilder setStringData:(data)];
+        if (dataUUID) {
+            [txBuilder setDataWithUUID:(dataUUID) timestamp:([timestamp longLongValue]) data:(data)];
+        } else {
+            [txBuilder setStringData:(data)];
+        }
+    }
+    for (int i = 0; i < utxos.count; i++) {
+        NSDictionary* utxo = utxos[i];
+        NSString* txid = [RCTConvert NSString:utxo[@"txid"]];
+        int vout = [RCTConvert int:utxo[@"vout"]];
+        [txBuilder addInput:(txid) vout:(vout)];
     }
     
     NSString* hex = [txBuilder build:(&error)];
@@ -140,6 +149,35 @@ RCT_EXPORT_METHOD(buildTransaction:(NSDictionary *) map
         resolve(hex);
     }
     
+}
+
+RCT_EXPORT_METHOD(convertHexStrToBase64:(NSString*) hex1
+                                   hex2:(NSString*) hex2
+                                resolve:(RCTPromiseResolveBlock)resolve
+                                 reject:(RCTPromiseRejectBlock)reject) {
+    NSError * __autoreleasing error;
+    
+    NSMutableData *hexData =  [[NSMutableData alloc] initWithCapacity:8];
+    
+    if (hex1) {
+        NSData *hexData1 = hexString2Data(hex1);
+        NSData *newData = reverseData(hexData1);
+        [hexData appendData:newData];
+    }
+    
+    if (hex2) {
+        NSData *hexData2 = hexString2Data(hex2);
+        NSData *newData = reverseData(hexData2);
+        [hexData appendData:newData];
+    }
+    
+    NSString *base64String = [hexData base64EncodedStringWithOptions: 0];
+    
+    if (error) {
+        reject([NSString stringWithFormat:@"%ld",error.code],error.localizedDescription,error);
+    } else {
+        resolve(base64String);
+    }
 }
 
 @end
