@@ -1,5 +1,8 @@
 package com.bigbang.wallet;
 
+import android.util.Base64;
+
+import com.bigbang.utils.StringUtils;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -150,6 +153,26 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
       promise.resolve(hex);
     } catch (Exception ex) {
       promise.reject("error", ex);
+    }
+  }
+
+  @ReactMethod
+  public void convertHexStrToBase64(String hex1, String hex2, Promise promise) {
+    byte[] byte1 = StringUtils.hexString2ReverseByte(hex1);
+    byte[] byte2 = StringUtils.hexString2ReverseByte(hex2);
+
+    if (byte1 != null && byte2 != null) {
+      byte[] hexData = StringUtils.byteMerger(byte1, byte2);
+      String base64 = Base64.encodeToString(hexData, Base64.NO_WRAP);
+      promise.resolve(base64);
+    } else if (byte1 != null && byte2 == null) {
+      String base64 = Base64.encodeToString(byte1, Base64.NO_WRAP);
+      promise.resolve(base64);
+    } else if (byte1 == null && byte2 != null) {
+      String base64 = Base64.encodeToString(byte2, Base64.NO_WRAP);
+      promise.resolve(base64);
+    } else {
+      promise.reject(new Exception("no hex"));
     }
   }
 }

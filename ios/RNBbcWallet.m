@@ -2,6 +2,7 @@
 #import <React/RCTConvert.h>
 #import "RNBbcWallet.h"
 #import <bbc/Bbc.h>
+#import "StringUtils.h"
 // @import Mobile;
 
 @implementation RNBbcWallet
@@ -148,6 +149,35 @@ RCT_EXPORT_METHOD(buildTransaction:(NSDictionary *) map
         resolve(hex);
     }
     
+}
+
+RCT_EXPORT_METHOD(convertHexStrToBase64:(NSString*) hex1
+                                   hex2:(NSString*) hex2
+                                resolve:(RCTPromiseResolveBlock)resolve
+                                 reject:(RCTPromiseRejectBlock)reject) {
+    NSError * __autoreleasing error;
+    
+    NSMutableData *hexData =  [[NSMutableData alloc] initWithCapacity:8];
+    
+    if (hex1) {
+        NSData *hexData1 = hexString2Data(hex1);
+        NSData *newData = reverseData(hexData1);
+        [hexData appendData:newData];
+    }
+    
+    if (hex2) {
+        NSData *hexData2 = hexString2Data(hex2);
+        NSData *newData = reverseData(hexData2);
+        [hexData appendData:newData];
+    }
+    
+    NSString *base64String = [hexData base64EncodedStringWithOptions: 0];
+    
+    if (error) {
+        reject([NSString stringWithFormat:@"%ld",error.code],error.localizedDescription,error);
+    } else {
+        resolve(base64String);
+    }
 }
 
 @end
