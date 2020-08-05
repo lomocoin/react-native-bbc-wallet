@@ -53,7 +53,7 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
         promise.reject("error", "Invalid mnemonic");
       } else {
         final byte[] seed = Bip39.newSeed(mnemonic, salt);
-        final KeyInfo keyPair = Bbc.deriveKey(seed, 0, 0, 0);
+        final KeyInfo keyPair = Bbc.deriveKeySimple(seed);
 
         final WritableMap resultMap = Arguments.createMap();
 

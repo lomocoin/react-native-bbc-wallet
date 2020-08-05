@@ -36,7 +36,7 @@ RCT_EXPORT_METHOD(importMnemonic:(NSString*)mnemonic
         reject(@"error", @"Invalid Mnemonic", nil);
     } else {
         NSData* seed = Bip39NewSeed(mnemonic, salt);
-        BbcKeyInfo * keyInfo = BbcDeriveKey(seed, 0, 0, 0, &error);
+        BbcKeyInfo * keyInfo = BbcDeriveKeySimple(seed, &error);
 
         NSMutableDictionary *retDict = [NSMutableDictionary dictionaryWithCapacity:3];
             retDict[@"address"] = keyInfo.address;
