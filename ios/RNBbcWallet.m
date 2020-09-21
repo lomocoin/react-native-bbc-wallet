@@ -27,16 +27,25 @@ RCT_EXPORT_METHOD(generateMnemonic:(RCTPromiseResolveBlock)resolve
 }
 
 RCT_EXPORT_METHOD(importMnemonic:(NSString*)mnemonic
-                                  salt:(NSString*)salt
-                                  resolve:(RCTPromiseResolveBlock)resolve
-                                  reject:(RCTPromiseRejectBlock)reject) {
+                  salt:(NSString*)salt
+                  importType:(NSString*) importType
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject) {
     NSError * __autoreleasing error;
 
     if (!Bip39IsMnemonicValid(mnemonic)) {
         reject(@"error", @"Invalid Mnemonic", nil);
     } else {
         NSData* seed = Bip39NewSeed(mnemonic, salt);
-        BbcKeyInfo * keyInfo = BbcDeriveKeySimple(seed, &error);
+        BbcKeyInfo* keyInfo;
+        
+        if ([@"pockMine" compare:importType]) {
+            keyInfo = BbcDeriveKeySimple(seed, &error);
+        }
+        
+        if ([@"imToken" compare:importType]) {
+            keyInfo = BbcDeriveKeySimple(seed, &error);
+        }
 
         NSMutableDictionary *retDict = [NSMutableDictionary dictionaryWithCapacity:3];
             retDict[@"address"] = keyInfo.address;

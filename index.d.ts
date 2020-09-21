@@ -9,6 +9,11 @@ export interface IUTXO {
   vout: number;
 }
 
+export enum ImportType {
+  pockMine = "pockMine",
+  imToken = "imToken",
+}
+
 export interface ITransactionData {
   utxos: IUTXO[];
   address: string;
@@ -24,7 +29,11 @@ export interface ITransactionData {
 
 declare module RNBbcWallet {
   function generateMnemonic(): Promise<string>;
-  function importMnemonic(mnemonic: string, salt: string): Promise<KeyInfo>;
+  function importMnemonic(
+    mnemonic: string,
+    salt: string,
+    importType: ImportType
+  ): Promise<KeyInfo>;
   function importPrivateKey(privateKey: string): Promise<KeyInfo>;
   function signTransactionWithTemplate(
     txString: string,
