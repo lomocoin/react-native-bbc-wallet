@@ -10,10 +10,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
-
-import java.util.HashMap;
 
 import bbc.Bbc;
 import bbc.KeyInfo;
@@ -60,7 +57,7 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
 	) {
 		try {
 			RNWalletOptions walletOptions = new RNWalletOptions();
-			walletOptions.setBate(options.hasKey("bate") && options.getBoolean("bate"));
+			walletOptions.setBeta(options.hasKey("beta") && options.getBoolean("beta"));
 			walletOptions.setShareAccountWithParentChain(options.hasKey("shareAccountWithParentChain")
 					&& options.getBoolean("shareAccountWithParentChain"));
 			walletOptions.setBBCUseStandardBip44ID(options.hasKey("BBCUseStandardBip44ID")
@@ -257,7 +254,7 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
 
 		Wallet_ wallet = null;
 		try {
-			wallet = Wallet.buildWalletFromMnemonic(mnemonic, walletOptions.isBate(), options);
+			wallet = Wallet.buildWalletFromMnemonic(mnemonic, walletOptions.isBeta(), options);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

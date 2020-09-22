@@ -36,7 +36,7 @@ RCT_EXPORT_METHOD(importMnemonicWithOptions:(NSString*)mnemonic
                   reject:(RCTPromiseRejectBlock)reject) {
     NSError * __autoreleasing error;
     RNWalletOptions *walletOptions = [[RNWalletOptions alloc]init];
-    [walletOptions setBate:[RCTConvert BOOL:[NSNumber numberWithBool:([options objectForKey:@"bate"] && options[@"bate"])]]];
+    [walletOptions setBeta:[RCTConvert BOOL:[NSNumber numberWithBool:([options objectForKey:@"beta"] && options[@"beta"])]]];
     
     [walletOptions setShareAccountWithParentChain:[RCTConvert BOOL:[NSNumber numberWithBool:[options objectForKey:@"shareAccountWithParentChain"] && options[@"shareAccountWithParentChain"]]]];
     
@@ -47,7 +47,7 @@ RCT_EXPORT_METHOD(importMnemonicWithOptions:(NSString*)mnemonic
     WalletWallet* wallet = [self getWalletInstance:mnemonic path:path password:password options:walletOptions error:&error];
     NSMutableDictionary *keys = [NSMutableDictionary dictionaryWithCapacity:2];
     for (NSString *symbol in symbols) {
-        NSMutableDictionary *keyInfo = [NSMutableDictionary dictionaryWithCapacity:2];
+        NSMutableDictionary *keyInfo = [NSMutableDictionary dictionaryWithCapacity:3];
         keyInfo[@"privateKey"] = [wallet derivePrivateKey:symbol error:&error];
         if(error) {
             reject([NSString stringWithFormat:@"%ld",error.code],error.localizedDescription,error);
@@ -256,7 +256,7 @@ RCT_EXPORT_METHOD(convertHexStrToBase64:(NSString*) hex1
         [options add:WalletWithFlag(WalletFlagMKFUseBBCBip44ID)];
     }
 
-    WalletWallet* wallet = WalletBuildWalletFromMnemonic(mnemonic, walletOptions.bate, options, error);
+    WalletWallet* wallet = WalletBuildWalletFromMnemonic(mnemonic, walletOptions.beta, options, error);
     return wallet;
 }
 

@@ -1,19 +1,18 @@
 package com.bigbang.wallet;
 
 public class RNWalletOptions {
-	private boolean bate;
+	private boolean beta;
 	private boolean shareAccountWithParentChain;
 	private boolean BBCUseStandardBip44ID;
 	private boolean MKFUseBBCBip44ID;
 
-	public boolean isBate() {
-		return bate;
+	public boolean isBeta() {
+		return beta;
 	}
 
-	public void setBate(boolean bate) {
-		this.bate = bate;
+	public void setBeta(boolean beta) {
+		this.beta = beta;
 	}
-
 
 	public boolean isShareAccountWithParentChain() {
 		return shareAccountWithParentChain;

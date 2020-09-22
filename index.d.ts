@@ -23,7 +23,7 @@ export interface ITransactionData {
 }
 
 export interface WalletOptions {
-  bate?: boolean; // default false
+  beta?: boolean; // default false
   shareAccountWithParentChain?: boolean; // default false
   BBCUseStandardBip44ID?: boolean; // default false
   MKFUseBBCBip44ID?: boolean; // default false

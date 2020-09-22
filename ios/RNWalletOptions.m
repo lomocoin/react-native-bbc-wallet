@@ -6,11 +6,11 @@
 //
 #import <RNWalletOptions.h>
 @implementation RNWalletOptions
-- (void)setBate:(BOOL)bate{
-    _bate = bate;
+- (void)setBeta:(BOOL)beta{
+    _beta = beta;
 }
-- (BOOL)bate{
-    return _bate;
+- (BOOL)beta{
+    return _beta;
 }
 
 - (void)setShareAccountWithParentChain:(BOOL)shareAccountWithParentChain{
