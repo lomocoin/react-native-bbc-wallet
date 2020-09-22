@@ -36,13 +36,22 @@ RCT_EXPORT_METHOD(importMnemonicWithOptions:(NSString*)mnemonic
                   reject:(RCTPromiseRejectBlock)reject) {
     NSError * __autoreleasing error;
     RNWalletOptions *walletOptions = [[RNWalletOptions alloc]init];
-    [walletOptions setBeta:[RCTConvert BOOL:[NSNumber numberWithBool:([options objectForKey:@"beta"] && options[@"beta"])]]];
+    if ([options objectForKey:@"beta"]) {
+        [walletOptions setBeta:[RCTConvert BOOL:(options[@"beta"])]];
+    }
     
-    [walletOptions setShareAccountWithParentChain:[RCTConvert BOOL:[NSNumber numberWithBool:[options objectForKey:@"shareAccountWithParentChain"] && options[@"shareAccountWithParentChain"]]]];
+    if ([options objectForKey:@"shareAccountWithParentChain"]) {
+        [walletOptions setShareAccountWithParentChain:[RCTConvert BOOL:options[@"shareAccountWithParentChain"]]];
+    }
     
-    [walletOptions setBBCUseStandardBip44ID:[RCTConvert BOOL:[NSNumber numberWithBool:[options objectForKey:@"BBCUseStandardBip44ID"] && options[@"BBCUseStandardBip44ID"]]]];
+    if ([options objectForKey:@"BBCUseStandardBip44ID"]) {
+        [walletOptions setBBCUseStandardBip44ID:[RCTConvert BOOL:options[@"BBCUseStandardBip44ID"]]];
+    }
     
-    [walletOptions setMKFUseBBCBip44ID:[RCTConvert BOOL:[NSNumber numberWithBool:[options objectForKey:@"MKFUseBBCBip44ID"] && options[@"MKFUseBBCBip44ID"]]]];
+    if ([options objectForKey:@"MKFUseBBCBip44ID"]) {
+        [walletOptions setMKFUseBBCBip44ID:[RCTConvert BOOL:options[@"MKFUseBBCBip44ID"]]];
+    }
+    
     
     WalletWallet* wallet = [self getWalletInstance:mnemonic path:path password:password options:walletOptions error:&error];
     NSMutableDictionary *keys = [NSMutableDictionary dictionaryWithCapacity:2];
@@ -248,6 +257,11 @@ RCT_EXPORT_METHOD(convertHexStrToBase64:(NSString*) hex1
     [options add:pathOption];
     [options add:passwordOption];
     [options add:shareAccountWithParentChainOption];
+    
+    NSLog(@"shareAccountWithParentChain：%d", walletOptions.shareAccountWithParentChain);
+    NSLog(@"beta：%d", walletOptions.BBCUseStandardBip44ID);
+    NSLog(@"BBCUseStandardBip44ID：%d", walletOptions.BBCUseStandardBip44ID);
+    NSLog(@"MKFUseBBCBip44ID：%d", walletOptions.MKFUseBBCBip44ID);
     
     if(walletOptions.BBCUseStandardBip44ID) {
         [options add:WalletWithFlag(WalletFlagBBCUseStandardBip44ID)];
