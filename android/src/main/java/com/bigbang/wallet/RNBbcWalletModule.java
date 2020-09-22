@@ -60,7 +60,7 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
 	) {
 		try {
 			RNWalletOptions walletOptions = new RNWalletOptions();
-			walletOptions.setBate(options.hasKey("bate") &&options.getBoolean("bate"));
+			walletOptions.setBate(options.hasKey("bate") && options.getBoolean("bate"));
 			walletOptions.setShareAccountWithParentChain(options.hasKey("shareAccountWithParentChain")
 					&& options.getBoolean("shareAccountWithParentChain"));
 			walletOptions.setBBCUseStandardBip44ID(options.hasKey("BBCUseStandardBip44ID")
@@ -81,7 +81,8 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				keys.putMap(symbol, keyInfo);
+				keys.putString("symbol", symbol);
+				keys.putMap("keyInfo", keyInfo);
 			}
 			promise.resolve(keys);
 		} catch (Exception e) {

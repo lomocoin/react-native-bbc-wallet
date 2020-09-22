@@ -45,7 +45,7 @@ RCT_EXPORT_METHOD(importMnemonicWithOptions:(NSString*)mnemonic
     [walletOptions setMKFUseBBCBip44ID:[RCTConvert BOOL:[NSNumber numberWithBool:[options objectForKey:@"MKFUseBBCBip44ID"] && options[@"MKFUseBBCBip44ID"]]]];
     
     WalletWallet* wallet = [self getWalletInstance:mnemonic path:path password:password options:walletOptions error:&error];
-    NSMutableDictionary *keys = [NSMutableDictionary dictionaryWithCapacity:1];
+    NSMutableDictionary *keys = [NSMutableDictionary dictionaryWithCapacity:2];
     for (NSString *symbol in symbols) {
         NSMutableDictionary *keyInfo = [NSMutableDictionary dictionaryWithCapacity:2];
         keyInfo[@"privateKey"] = [wallet derivePrivateKey:symbol error:&error];
@@ -65,8 +65,10 @@ RCT_EXPORT_METHOD(importMnemonicWithOptions:(NSString*)mnemonic
             return;
         }
 
-        keyInfo[symbol] = keys;
+        keys[@"symbol"] = symbol;
+        keys[@"keyInfo"] = keyInfo;
     }
+    resolve(keys);
 }
 
 RCT_EXPORT_METHOD(importMnemonic:(NSString*)mnemonic

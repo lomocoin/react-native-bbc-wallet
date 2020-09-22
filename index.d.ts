@@ -31,6 +31,11 @@ export interface WalletOptions {
 
 export type Symbol = 'BTC' | 'ETH' | 'BBC' | 'USDT(Omni)';
 
+export interface Keys {
+  symbol: string;
+  keyInfo: KeyInfo;
+}
+
 declare module RNBbcWallet {
   function generateMnemonic(): Promise<string>;
   function importMnemonic(
@@ -43,7 +48,7 @@ declare module RNBbcWallet {
     password: string,
     options: WalletOptions,
     symbols: Symbol[],
-  );
+  ): Promise<Keys>;
   function importPrivateKey(privateKey: string): Promise<KeyInfo>;
   function signTransactionWithTemplate(
     txString: string,
