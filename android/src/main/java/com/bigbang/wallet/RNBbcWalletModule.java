@@ -10,17 +10,18 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 import bbc.Bbc;
 import bbc.KeyInfo;
 import bbc.TxBuilder;
 import bip39.Bip39;
-import bip44.Bip44;
-import bip44.Deriver;
+import wallet.Wallet;
+import wallet.WalletOptions;
+import wallet.Wallet_;
 
 public class RNBbcWalletModule extends ReactContextBaseJavaModule {
 
@@ -49,31 +50,57 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
 	}
 
 	@ReactMethod
-	public void importMnemonic(final String mnemonic, final String salt, final String importType, final Promise promise) {
+	public void importMnemonicWithOptions(
+			final String mnemonic,
+			final String path,
+			final String password,
+			final ReadableMap options,
+			final ReadableArray symbols,
+			Promise promise
+	) {
+		try {
+			RNWalletOptions walletOptions = new RNWalletOptions();
+			walletOptions.setBate(options.hasKey("bate") &&options.getBoolean("bate"));
+			walletOptions.setShareAccountWithParentChain(options.hasKey("shareAccountWithParentChain")
+					&& options.getBoolean("shareAccountWithParentChain"));
+			walletOptions.setBBCUseStandardBip44ID(options.hasKey("BBCUseStandardBip44ID")
+					&& options.getBoolean("BBCUseStandardBip44ID"));
+			walletOptions.setMKFUseBBCBip44ID(options.hasKey("MKFUseBBCBip44ID")
+					&& options.getBoolean("MKFUseBBCBip44ID"));
+
+			Wallet_ wallet = this.getWalletInstance(mnemonic, path, password, walletOptions);
+			WritableMap keys = Arguments.createMap();
+
+			for (int i = 0; i < symbols.size(); i++) {
+				String symbol = symbols.getString(i);
+				WritableMap keyInfo = Arguments.createMap();
+				try {
+					keyInfo.putString("publicKey", wallet.derivePublicKey(symbol));
+					keyInfo.putString("address", wallet.deriveAddress(symbol));
+					keyInfo.putString("privateKey", wallet.derivePrivateKey(symbol));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				keys.putMap(symbol, keyInfo);
+			}
+			promise.resolve(keys);
+		} catch (Exception e) {
+			e.printStackTrace();
+			promise.reject(e);
+		}
+	}
+
+	@ReactMethod
+	public void importMnemonic(final String mnemonic, final String salt, final Promise promise) {
 		try {
 			if (!Bip39.isMnemonicValid(mnemonic)) {
 				promise.reject("error", "Invalid mnemonic");
 			} else {
 				final byte[] seed = Bip39.newSeed(mnemonic, salt);
-				String address = "";
-				String privateKey = "";
-				String publicKey = "";
-
-				// 支持pockMine导入
-				if ("pockMine".equals(importType)) {
-					final KeyInfo keyPair = Bbc.deriveKeySimple(seed);
-					address = keyPair.getAddress();
-					privateKey = keyPair.getPrivateKey();
-					publicKey = keyPair.getPublicKey();
-				}
-
-				// 支持imToken导入
-				if ("imToken".equals(importType)) {
-					final Deriver deriver = Bbc.newSimpleBip44Deriver(seed);
-					address = deriver.deriveAddress();
-					privateKey = deriver.derivePrivateKey();
-					publicKey = deriver.derivePublicKey();
-				}
+				final KeyInfo keyPair = Bbc.deriveKeySimple(seed);
+				String address = keyPair.getAddress();
+				String privateKey = keyPair.getPrivateKey();
+				String publicKey = keyPair.getPublicKey();
 
 				final WritableMap resultMap = Arguments.createMap();
 				resultMap.putString("address", address);
@@ -203,5 +230,36 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
 		} else {
 			promise.reject(new Exception("no hex"));
 		}
+	}
+
+	/**
+	 * @params password: salt
+	 */
+	private Wallet_ getWalletInstance(
+			String mnemonic,
+			String path,
+			String password,
+			RNWalletOptions walletOptions
+	) {
+		WalletOptions options = new WalletOptions();
+		options.add(Wallet.withPathFormat(path));
+		options.add(Wallet.withPassword(password));
+		options.add(Wallet.withShareAccountWithParentChain(walletOptions.isShareAccountWithParentChain()));
+
+		if(walletOptions.isBBCUseStandardBip44ID()){
+			options.add(Wallet.withFlag(Wallet.FlagBBCUseStandardBip44ID));
+		}
+
+		if (walletOptions.isMKFUseBBCBip44ID()) {
+			options.add(Wallet.withFlag(Wallet.FlagMKFUseBBCBip44ID));
+		}
+
+		Wallet_ wallet = null;
+		try {
+			wallet = Wallet.buildWalletFromMnemonic(mnemonic, walletOptions.isBate(), options);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return wallet;
 	}
 }

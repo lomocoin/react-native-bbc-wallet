@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.source_files  = "ios/*.{h,m}"
 
   s.dependency "React"
-  s.vendored_frameworks = 'ios/bbc.framework'
+  s.vendored_frameworks = 'ios/Bip39.framework'
 
 end
 
