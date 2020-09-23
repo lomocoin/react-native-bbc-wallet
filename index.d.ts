@@ -9,11 +9,6 @@ export interface IUTXO {
   vout: number;
 }
 
-export enum ImportType {
-  pockMine = "pockMine",
-  imToken = "imToken",
-}
-
 export interface ITransactionData {
   utxos: IUTXO[];
   address: string;
@@ -27,13 +22,33 @@ export interface ITransactionData {
   timestamp: string;
 }
 
+export interface WalletOptions {
+  beta?: boolean; // default false
+  shareAccountWithParentChain?: boolean; // default false
+  BBCUseStandardBip44ID?: boolean; // default false
+  MKFUseBBCBip44ID?: boolean; // default false
+}
+
+export type Symbol = 'BTC' | 'ETH' | 'BBC' | 'USDT(Omni)';
+
+export interface Keys {
+  symbol: string;
+  keyInfo: KeyInfo;
+}
+
 declare module RNBbcWallet {
   function generateMnemonic(): Promise<string>;
   function importMnemonic(
     mnemonic: string,
     salt: string,
-    importType: ImportType
   ): Promise<KeyInfo>;
+  function importMnemonicWithOptions(
+    mnemonic: string,
+    path: string,
+    password: string,
+    options: WalletOptions,
+    symbols: Symbol[],
+  ): Promise<Keys>;
   function importPrivateKey(privateKey: string): Promise<KeyInfo>;
   function signTransactionWithTemplate(
     txString: string,

@@ -37,6 +37,6 @@ repositories {
 
 dependencies {
     api 'com.facebook.react:react-native:+'
-    implementation(name:'bbc', ext:'aar')
-    implementation files('libs/bbc-sources.jar')
+    implementation(name:'wallet', ext:'aar')
+    implementation files('libs/wallet-sources.jar')
 }
