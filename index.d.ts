@@ -55,7 +55,18 @@ declare module RNBbcWallet {
     templateData: string,
     privateKey: string
   ): Promise<string>;
+  function symbolSignWithPrivateKeyTemplate(
+    symbol: string,
+    txString: string,
+    templateData: string,
+    privateKey: string
+  ): Promise<string>;
   function signTransaction(
+    txString: string,
+    privateKey: string
+  ): Promise<string>;
+  function symbolSignWithPrivateKey(
+    symbol: string,
     txString: string,
     privateKey: string
   ): Promise<string>;
