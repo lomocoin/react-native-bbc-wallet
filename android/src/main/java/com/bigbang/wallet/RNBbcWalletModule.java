@@ -141,9 +141,32 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
 
 
 	@ReactMethod
+	public void symbolSignWithPrivateKey(final String symbol, final String txString, final String privateKey, final Promise promise) {
+		try {
+			final String signedTX = Bbc.symbolSignWithPrivateKey(symbol, txString, "", privateKey);
+
+			promise.resolve(signedTX);
+		} catch (final Exception e) {
+			promise.reject("error", e);
+		}
+	}
+
+
+	@ReactMethod
 	public void signTransactionWithTemplate(final String txString, String templatemap, final String privateKey, final Promise promise) {
 		try {
 			final String signedTX = Bbc.signWithPrivateKey(txString, templatemap, privateKey);
+
+			promise.resolve(signedTX);
+		} catch (final Exception e) {
+			promise.reject("error", e);
+		}
+	}
+
+	@ReactMethod
+	public void symbolSignWithPrivateKeyTemplate(final String symbol, final String txString, String templatemap, final String privateKey, final Promise promise) {
+		try {
+			final String signedTX = Bbc.symbolSignWithPrivateKey(symbol, txString, templatemap, privateKey);
 
 			promise.resolve(signedTX);
 		} catch (final Exception e) {
