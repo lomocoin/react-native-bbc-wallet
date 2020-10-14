@@ -62,6 +62,7 @@ declare module RNBbcWallet {
   function buildTransaction(data: ITransactionData): Promise<string>;
   function addressToPublicKey(address: string): Promise<string>;
   function convertHexStrToBase64(hex1: string, hex2: string): Promise<string>;
+  function calcTxid(symbol: string, rawTx: string): Promise<string>;
 }
 
 export default RNBbcWallet;

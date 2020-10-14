@@ -230,6 +230,16 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
 		}
 	}
 
+	@ReactMethod
+	public void calcTxid(final String symbol, final String rawTx, final Promise promise) {
+		try {
+			final String txid = Bbc.calcTxid(symbol, rawTx);
+			promise.resolve(txid);
+		} catch (final Exception e) {
+			promise.reject("error", e);
+		}
+	}
+
 	/**
 	 * @params password: salt
 	 */
