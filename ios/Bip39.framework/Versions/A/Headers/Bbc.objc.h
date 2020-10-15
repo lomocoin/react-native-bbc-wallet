@@ -13,6 +13,7 @@
 #include "Bip44.objc.h"
 
 @class BbcKeyInfo;
+@class BbcTemplateInfo;
 @class BbcTxBuilder;
 
 /**
@@ -27,6 +28,29 @@
 @property (nonatomic) NSString* _Nonnull privateKey;
 @property (nonatomic) NSString* _Nonnull publicKey;
 @property (nonatomic) NSString* _Nonnull address;
+@end
+
+/**
+ * TemplateInfo 简要模版信息
+ */
+@interface BbcTemplateInfo : NSObject <goSeqRefInterface> {
+}
+@property(strong, readonly) _Nonnull id _ref;
+
+- (nonnull instancetype)initWithRef:(_Nonnull id)ref;
+- (nonnull instancetype)init;
+/**
+ * Type 类型
+ */
+@property (nonatomic) long type;
+/**
+ * Address 地址
+ */
+@property (nonatomic) NSString* _Nonnull address;
+/**
+ * RawHex hex编码的原始数据（TemplateData）
+ */
+@property (nonatomic) NSString* _Nonnull rawHex;
 @end
 
 /**
@@ -47,6 +71,10 @@
  * AddInput 参考listunspent,确保输入金额满足amount
  */
 - (BbcTxBuilder* _Nullable)addInput:(NSString* _Nullable)txid vout:(int8_t)vout;
+/**
+ * AddTemplateData 添加模版原始数据,多个模版时需要自行确保顺序
+ */
+- (BbcTxBuilder* _Nullable)addTemplateData:(NSString* _Nullable)tplData;
 /**
  * Build 构造交易,返回hex编码的tx
  */
@@ -92,12 +120,22 @@
  */
 - (BbcTxBuilder* _Nullable)setTimestamp:(long)timestamp;
 /**
+ * SetType typ
+ */
+- (BbcTxBuilder* _Nullable)setType:(long)v;
+/**
  * SetVersion 当前版本 1
  */
 - (BbcTxBuilder* _Nullable)setVersion:(long)v;
 @end
 
+/**
+ * .
+ */
 FOUNDATION_EXPORT NSString* _Nonnull const BbcSymbolBBC;
+/**
+ * .
+ */
 FOUNDATION_EXPORT NSString* _Nonnull const BbcSymbolMKF;
 
 @interface Bbc : NSObject
@@ -111,6 +149,16 @@ FOUNDATION_EXPORT NSString* _Nonnull const BbcSymbolMKF;
 FOUNDATION_EXPORT NSString* _Nonnull BbcAddress2pubk(NSString* _Nullable address, NSError* _Nullable* _Nullable error);
 
 /**
+ * CalcTxid 计算txid, symbol: BBC|MKF
+ */
+FOUNDATION_EXPORT NSString* _Nonnull BbcCalcTxid(NSString* _Nullable symbol, NSString* _Nullable rawTx, NSError* _Nullable* _Nullable error);
+
+/**
+ * CreateTemplateDataDexOrder 获取dexOrder模版数据
+ */
+FOUNDATION_EXPORT BbcTemplateInfo* _Nullable BbcCreateTemplateDataDexOrder(NSString* _Nullable sellerAddress, NSString* _Nullable coinpair, int64_t price, int32_t fee, NSString* _Nullable recvAddress, int32_t validHeight, NSString* _Nullable matchAddress, NSString* _Nullable dealAddress, NSError* _Nullable* _Nullable error);
+
+/**
  * DecodeSymbolTX 解析原始交易（使用JSON RPC createtransaction 创建的交易）,symbol: BBC | MKF
  */
 FOUNDATION_EXPORT NSString* _Nonnull BbcDecodeSymbolTX(NSString* _Nullable symbol, NSString* _Nullable rawTX, NSError* _Nullable* _Nullable error);
@@ -121,25 +169,22 @@ FOUNDATION_EXPORT NSString* _Nonnull BbcDecodeSymbolTX(NSString* _Nullable symbo
 FOUNDATION_EXPORT NSString* _Nonnull BbcDecodeTX(NSString* _Nullable rawTX, NSError* _Nullable* _Nullable error);
 
 /**
- * DeriveKey 该函数后面3个参数无效，等同于 DeriveKeySimple，仅保留
+ * DeriveKey 该该函数已废弃，请使用NewSymbolCoin
  */
 FOUNDATION_EXPORT BbcKeyInfo* _Nullable BbcDeriveKey(NSData* _Nullable seed, long accountIndex, long changeType, long index, NSError* _Nullable* _Nullable error);
 
 /**
- * DeriveKeySimple 推导路径 m/44'/%d'
+ * DeriveKeySimple 该函数已废弃，请使用NewSymbolCoin
  */
 FOUNDATION_EXPORT BbcKeyInfo* _Nullable BbcDeriveKeySimple(NSData* _Nullable seed, NSError* _Nullable* _Nullable error);
 
 /**
- * DeriveSymbolKeySimple 推导路径 m/44'/%d'
+ * DeriveSymbolKeySimple 该函数已废弃，请使用NewSymbolCoin
  */
 FOUNDATION_EXPORT BbcKeyInfo* _Nullable BbcDeriveSymbolKeySimple(NSString* _Nullable symbol, NSData* _Nullable seed, NSError* _Nullable* _Nullable error);
 
 /**
- * NewBip44Deriver 根据种子获取bip44推导
-accountIndex 账户索引，以0开始
-changeType 0:外部使用， 1:找零， 通常使用0,BBC通常找零到发送地址
-index 地址索引，以0开始
+ * NewBip44Deriver 该函数已废弃，请使用NewSymbolBip44Deriver
  */
 FOUNDATION_EXPORT id<Bip44Deriver> _Nullable BbcNewBip44Deriver(NSData* _Nullable seed, long accountIndex, long changeType, long index, NSError* _Nullable* _Nullable error);
 
@@ -147,22 +192,15 @@ FOUNDATION_EXPORT id<Bip44Deriver> _Nullable BbcNewBip44Deriver(NSData* _Nullabl
 
 
 /**
- * NewSimpleBip44Deriver 根据种子获取bip44推导,仅推导1个
+ * NewSymbolBip44Deriver 获取bip44推导
+accountIndex 账户索引，以0开始
+changeType 0:外部使用， 1:找零， 通常使用0,BBC通常找零到发送地址
+index 地址索引，以0开始
  */
-FOUNDATION_EXPORT id<Bip44Deriver> _Nullable BbcNewSimpleBip44Deriver(NSData* _Nullable seed, NSError* _Nullable* _Nullable error);
-
-/**
- * NewSymbolBip44Deriver 指定币种推导
- */
-FOUNDATION_EXPORT id<Bip44Deriver> _Nullable BbcNewSymbolBip44Deriver(NSString* _Nullable symbol, NSData* _Nullable seed, long accountIndex, long changeType, long index, NSError* _Nullable* _Nullable error);
+FOUNDATION_EXPORT id<Bip44Deriver> _Nullable BbcNewSymbolBip44Deriver(NSString* _Nullable symbol, NSString* _Nullable bip44Path, NSString* _Nullable bip44Key, NSData* _Nullable seed, long accountIndex, long changeType, long index, NSError* _Nullable* _Nullable error);
 
 // skipped function NewSymbolCoin with unsupported parameter or return types
 
-
-/**
- * NewSymbolSimpleBip44Deriver 根据种子获取bip44推导,仅推导1个
- */
-FOUNDATION_EXPORT id<Bip44Deriver> _Nullable BbcNewSymbolSimpleBip44Deriver(NSString* _Nullable symbol, NSData* _Nullable seed, NSError* _Nullable* _Nullable error);
 
 /**
  * NewTxBuilder new 一个transaction builder

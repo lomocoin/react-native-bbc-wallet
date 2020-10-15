@@ -123,6 +123,20 @@ RCT_EXPORT_METHOD(importPrivateKey:(NSString*)privateKey
     }
 }
 
+RCT_EXPORT_METHOD(calcTxid:(NSString*)symbol
+                  rawTx:(NSString*)rawTx
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject) {
+    NSError * __autoreleasing error;
+    
+    NSString *txid = BbcCalcTxid(symbol, rawTx, &error);
+    if (error) {
+        reject([NSString stringWithFormat:@"%ld",error.code],error.localizedDescription,error);
+    } else {
+        resolve(txid);
+    }
+}
+
 RCT_EXPORT_METHOD(signTransaction:(NSString*) txString
                                    privateKey:(NSString*) privateKey
                                    resolve:(RCTPromiseResolveBlock)resolve
@@ -130,6 +144,22 @@ RCT_EXPORT_METHOD(signTransaction:(NSString*) txString
     NSError * __autoreleasing error;
 
     NSString* signedTransaction = BbcSignWithPrivateKey(txString, NULL, privateKey, &error);
+
+    if (error) {
+        reject([NSString stringWithFormat:@"%ld",error.code],error.localizedDescription,error);
+    } else {
+        resolve(signedTransaction);
+    }
+}
+
+RCT_EXPORT_METHOD(symbolSignWithPrivateKey:(NSString*) symbol
+                  txString:(NSString*) txString
+                  privateKey:(NSString*) privateKey
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject) {
+    NSError * __autoreleasing error;
+
+    NSString* signedTransaction = BbcSymbolSignWithPrivateKey(symbol, txString, NULL, privateKey, &error);
 
     if (error) {
         reject([NSString stringWithFormat:@"%ld",error.code],error.localizedDescription,error);
@@ -150,6 +180,27 @@ RCT_EXPORT_METHOD(signTransactionWithTemplate:(NSString*) txString
     NSLog(@"privateKey:%@",privateKey);
 
     NSString* signTransactionWithTemplate = BbcSignWithPrivateKey(txString, templateData, privateKey, &error);
+
+    if (error) {
+        reject([NSString stringWithFormat:@"%ld",error.code],error.localizedDescription,error);
+    } else {
+        resolve(signTransactionWithTemplate);
+    }
+}
+
+RCT_EXPORT_METHOD(symbolSignWithPrivateKeyTemplate:(NSString*) symbol
+                  txString:(NSString*) txString
+                  templateData:(NSString*) templateData
+                  privateKey:(NSString*) privateKey
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject) {
+    NSError * __autoreleasing error;
+    
+    NSLog(@"txString:%@",txString);
+    NSLog(@"templateData:%@",templateData);
+    NSLog(@"privateKey:%@",privateKey);
+
+    NSString* signTransactionWithTemplate = BbcSymbolSignWithPrivateKey(symbol, txString, templateData, privateKey, &error);
 
     if (error) {
         reject([NSString stringWithFormat:@"%ld",error.code],error.localizedDescription,error);
