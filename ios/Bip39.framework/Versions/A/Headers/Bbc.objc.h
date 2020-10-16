@@ -169,17 +169,17 @@ FOUNDATION_EXPORT NSString* _Nonnull BbcDecodeSymbolTX(NSString* _Nullable symbo
 FOUNDATION_EXPORT NSString* _Nonnull BbcDecodeTX(NSString* _Nullable rawTX, NSError* _Nullable* _Nullable error);
 
 /**
- * DeriveKey 该该函数已废弃，请使用NewSymbolCoin
+ * DeriveKey 该该函数已废弃，请使用NewSymbolBip44Deriver
  */
 FOUNDATION_EXPORT BbcKeyInfo* _Nullable BbcDeriveKey(NSData* _Nullable seed, long accountIndex, long changeType, long index, NSError* _Nullable* _Nullable error);
 
 /**
- * DeriveKeySimple 该函数已废弃，请使用NewSymbolCoin
+ * DeriveKeySimple 该函数已废弃，请使用NewSymbolBip44Deriver
  */
 FOUNDATION_EXPORT BbcKeyInfo* _Nullable BbcDeriveKeySimple(NSData* _Nullable seed, NSError* _Nullable* _Nullable error);
 
 /**
- * DeriveSymbolKeySimple 该函数已废弃，请使用NewSymbolCoin
+ * DeriveSymbolKeySimple 该函数已废弃，请使用NewSymbolBip44Deriver
  */
 FOUNDATION_EXPORT BbcKeyInfo* _Nullable BbcDeriveSymbolKeySimple(NSString* _Nullable symbol, NSData* _Nullable seed, NSError* _Nullable* _Nullable error);
 
@@ -188,16 +188,10 @@ FOUNDATION_EXPORT BbcKeyInfo* _Nullable BbcDeriveSymbolKeySimple(NSString* _Null
  */
 FOUNDATION_EXPORT id<Bip44Deriver> _Nullable BbcNewBip44Deriver(NSData* _Nullable seed, long accountIndex, long changeType, long index, NSError* _Nullable* _Nullable error);
 
-// skipped function NewCoin with unsupported parameter or return types
-
-
 /**
- * NewSymbolBip44Deriver 获取bip44推导
-accountIndex 账户索引，以0开始
-changeType 0:外部使用， 1:找零， 通常使用0,BBC通常找零到发送地址
-index 地址索引，以0开始
+ * NewSymbolBip44Deriver symbol: BBC | MKF 获取bip44推导
  */
-FOUNDATION_EXPORT id<Bip44Deriver> _Nullable BbcNewSymbolBip44Deriver(NSString* _Nullable symbol, NSString* _Nullable bip44Path, NSString* _Nullable bip44Key, NSData* _Nullable seed, long accountIndex, long changeType, long index, NSError* _Nullable* _Nullable error);
+FOUNDATION_EXPORT id<Bip44Deriver> _Nullable BbcNewSymbolBip44Deriver(NSString* _Nullable symbol, NSString* _Nullable bip44Path, NSString* _Nullable bip44Key, NSData* _Nullable seed, NSError* _Nullable* _Nullable error);
 
 // skipped function NewSymbolCoin with unsupported parameter or return types
 

@@ -41,6 +41,8 @@ declare module RNBbcWallet {
   function importMnemonic(
     mnemonic: string,
     salt: string,
+    symbol: string,
+    path: string,
   ): Promise<KeyInfo>;
   function importMnemonicWithOptions(
     mnemonic: string,

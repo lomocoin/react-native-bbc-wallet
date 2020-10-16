@@ -89,16 +89,16 @@ public class RNBbcWalletModule extends ReactContextBaseJavaModule {
 	}
 
 	@ReactMethod
-	public void importMnemonic(final String mnemonic, final String salt, final Promise promise) {
+	public void importMnemonic(final String mnemonic, final String salt, final String symbol, final String path, final Promise promise) {
 		try {
 			if (!Bip39.isMnemonicValid(mnemonic)) {
 				promise.reject("error", "Invalid mnemonic");
 			} else {
 				final byte[] seed = Bip39.newSeed(mnemonic, salt);
-				final KeyInfo keyPair = Bbc.deriveKeySimple(seed);
-				String address = keyPair.getAddress();
-				String privateKey = keyPair.getPrivateKey();
-				String publicKey = keyPair.getPublicKey();
+				final bip44.Deriver keyPair = Bbc.newSymbolBip44Deriver(symbol, symbol, path, seed);
+				String address = keyPair.deriveAddress();
+				String privateKey = keyPair.derivePrivateKey();
+				String publicKey = keyPair.derivePublicKey();
 
 				final WritableMap resultMap = Arguments.createMap();
 				resultMap.putString("address", address);
