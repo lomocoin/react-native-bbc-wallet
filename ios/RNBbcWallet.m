@@ -94,8 +94,8 @@ RCT_EXPORT_METHOD(importMnemonic:(NSString*)mnemonic
         NSData* seed = Bip39NewSeed(mnemonic, salt);
         id<Bip44Deriver> _Nullable keyInfo = BbcNewSymbolBip44Deriver(symbol, path, symbol, seed, &error);
         NSString *address = [keyInfo deriveAddress:&error];
-        NSString *privateKey = [keyInfo deriveAddress:&error];
-        NSString *publicKey = [keyInfo deriveAddress:&error];
+        NSString *privateKey = [keyInfo derivePrivateKey:&error];
+        NSString *publicKey = [keyInfo derivePublicKey:&error];
 
         NSMutableDictionary *retDict = [NSMutableDictionary dictionaryWithCapacity:3];
             retDict[@"address"] = address;
