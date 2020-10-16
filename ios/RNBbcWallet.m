@@ -92,7 +92,7 @@ RCT_EXPORT_METHOD(importMnemonic:(NSString*)mnemonic
         reject(@"error", @"Invalid Mnemonic", nil);
     } else {
         NSData* seed = Bip39NewSeed(mnemonic, salt);
-        id<Bip44Deriver> _Nullable keyInfo = BbcNewSymbolBip44Deriver(symbol, path, symbol, seed, 0, 0, 0, &error);
+        id<Bip44Deriver> _Nullable keyInfo = BbcNewSymbolBip44Deriver(symbol, path, symbol, seed, &error);
         NSString *address = [keyInfo deriveAddress:&error];
         NSString *privateKey = [keyInfo deriveAddress:&error];
         NSString *publicKey = [keyInfo deriveAddress:&error];
